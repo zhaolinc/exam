@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: exam
+  #####热部署, 修改类和资源时不重启服务
+  devtools:
+    restart:
+      enabled: true                    #设置开启热部署
+      additional-paths: src/main/java  #重启目录
+  ######数据源
+  datasource:
+    # 云数据库
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://rm-bp195yd0o28vvx5i5lo.mysql.rds.aliyuncs.com/exam?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useAffectedRows=true&zeroDateTimeBehavior=convertToNull&useOldAliasMetadataBehavior=true
+    username: root
+    password: Malus1006
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      minimum-idle: 1
+      maximum-pool-size: 3
+      auto-commit: true
+      idle-timeout: 300000
+      pool-name: TutorialsHikariCP
+      max-lifetime: 1800000
+      connection-timeout: 300000
+      connection-test-query: SELECT 1
+server:
+  port: 8081
+  ssl:
+    key-store: '/home/ssl/zhaolin.space.pfx'
+    key-store-password: 'MCDvde9E'
+mybatis:
+  # 设置实体类
+  type-aliases-package: exam.domain
+  mapper-locations: classpath:mapper/*.xml
+
+
+
+
+

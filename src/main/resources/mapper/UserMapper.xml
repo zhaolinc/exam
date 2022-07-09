@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="exam.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="exam.domain.User">
+            <id property="userno" column="userno" jdbcType="VARCHAR"/>
+            <result property="password" column="password" jdbcType="VARCHAR"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="gender" column="gender" jdbcType="INTEGER"/>
+            <result property="phone" column="phone" jdbcType="VARCHAR"/>
+            <result property="email" column="email" jdbcType="VARCHAR"/>
+            <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
+            <result property="classno" column="classno" jdbcType="VARCHAR"/>
+            <result property="type" column="type" jdbcType="INTEGER"/>
+            <result property="classname" column="classname" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="BaseList">
+        userno,password,`name`,
+        gender,phone,email,
+        avatar,`type`,classname,
+        classno
+    </sql>
+
+    <!--  查询课程学生列表  -->
+    <select id="stuquery" resultMap="BaseResultMap">
+        select u.*,c.classname from user u, uclink s ,classes c
+        where u.userno = s.userno and c.classno = u.classno
+          and s.courseno = (select courseno from uclink where userno = #{value})
+    </select>
+    <!--  登录查询  -->
+    <select id="querylogin" resultMap="BaseResultMap">
+        select * from user
+            where userno = #{userno}
+            and password = #{password}
+            and type = #{type}
+    </select>
+    <!--  查询老师信息  -->
+    <select id="queryclassno" resultMap="BaseResultMap" >
+        select * from user where type = '1' and classno = #{value}
+    </select>
+    <!--  查询不是班主任的老师列表  -->
+    <select id="getTeachers" resultMap="BaseResultMap" >
+        select * from user where type = '1'
+    </select>
+    <select id="getAllTeacher" resultMap="BaseResultMap" >
+        select * from user where type = '1'
+    </select>
+    <!--  根据userno查询classno  -->
+    <select id="getClassno" parameterType="String" resultType="String">
+        select classno from user where userno = #{value}
+    </select>
+    <!--  学生查询班级学生列表  -->
+    <select id="getClassStuList" resultMap="BaseResultMap">
+        select * from user  where classno = #{value} and type = 0;
+    </select>
+
+    <!--  学生查询班级学生列表  -->
+    <select id="getCourseStuList" resultMap="BaseResultMap">
+        select u.* from user u,uclink uc
+        where uc.userno = u.userno
+        and u.type = 0
+        and uc.courseno = #{value}
+    </select>
+
+    <!--  根据条件查询所有老师学生  -->
+    <select id="getAllStuT" parameterType="exam.domain.User" resultMap="BaseResultMap" >
+        select u.*, c.classname from user u
+            left join classes c on u.classno = c.classno
+        <where>
+            <if test="userno != null and userno != ''">
+                u.userno = #{userno}
+            </if>
+            <if test="name != null and name != ''">
+                u.name = #{name}
+            </if>
+            and  u.type = #{type}
+        </where>
+
+    </select>
+
+    <!--  查询所有学生  -->
+    <select id="queryAllStudent" resultMap="BaseResultMap">
+        select u.*, c.classname from user u,classes c where u.type = '0' and u.classno = c.classno
+    </select>
+
+    <!--  微信小程序更新用户信息  -->
+    <update id="updateinfo" parameterType="exam.domain.User">
+        update user set phone = #{phone},email = #{email}, gender = #{gender}  where userno = #{userno}
+    </update>
+
+    <update id="update" parameterType="exam.domain.User">
+        update user
+            <set>
+                <if test="name != null and name != ''">
+                    name = #{name},
+                </if>
+                <if test="password != null and password != ''">
+                    password = #{password},
+                </if>
+                <if test="gender != null and gender != ''">
+                    gender = #{gender},
+                </if>
+                <if test="phone != null and phone != ''">
+                    phone = #{phone},
+                </if>
+                <if test="email != null and email != ''">
+                    email = #{email},
+                </if>
+                <if test="avatar != null and avatar != ''">
+                    avatar = #{avatar},
+                </if>
+                <if test="classno != null and classno != ''">
+                    classno = #{classno}
+                </if>
+            </set>
+        where userno = #{userno}
+    </update>
+
+    <!--设置为班主任-->
+    <update id="setClassno" parameterType="exam.domain.User">
+        update user set classno = #{classno}  where userno = #{userno}
+    </update>
+
+    <update id="updatepassword" parameterType="exam.domain.User">
+        update user set password = #{password} where userno = #{userno}
+    </update>
+
+    <delete id="delete" parameterType="String">
+        delete from user where userno = #{value}
+    </delete>
+
+    <insert id="insert" parameterType="exam.domain.User">
+        insert into user(userno,password,`name`,
+                         gender,phone,email,
+                         avatar,classno,`type`)
+         values(#{userno},#{password},#{name},#{gender},#{phone},#{email},#{avatar},#{classno},#{type})
+    </insert>
+
+</mapper>

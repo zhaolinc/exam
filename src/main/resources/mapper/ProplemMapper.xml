@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="exam.mapper.ProplemMapper">
+
+    <resultMap id="BaseResultMap" type="exam.domain.Proplem">
+        <id property="id" column="ID" jdbcType="VARCHAR"/>
+        <result property="type" column="type" jdbcType="INTEGER"/>
+        <result property="difficulty" column="difficulty" jdbcType="DOUBLE"/>
+        <result property="points" column="points" jdbcType="VARCHAR"/>
+        <result property="title" column="title" jdbcType="VARCHAR"/>
+        <result property="score" column="score" jdbcType="VARCHAR"/>
+        <result property="selecta" column="selectA" jdbcType="VARCHAR"/>
+        <result property="selectb" column="selectB" jdbcType="VARCHAR"/>
+        <result property="selectc" column="selectC" jdbcType="VARCHAR"/>
+        <result property="selectd" column="selectD" jdbcType="VARCHAR"/>
+        <result property="answer" column="answer" jdbcType="VARCHAR"/>
+        <result property="anlysis" column="anlysis" jdbcType="VARCHAR"/>
+        <result property="courseno" column="courseno" jdbcType="VARCHAR"/>
+        <result property="createtime" column="createtime" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="BaseColumn">
+        ID,`type`,difficulty,
+        points,title,score,
+        selectA,selectB,selectC,
+        selectD,answer,anlysis,
+        courseno,createtime
+    </sql>
+
+    <select id="selectByType"  resultMap="BaseResultMap">
+        select * from proplem where `type` = #{type} and courseno = #{courseno}
+    </select>
+
+    <select id="selectById"  resultMap="BaseResultMap">
+        select * from proplem where id = #{value}
+    </select>
+
+    <select id="selectAll" parameterType="exam.domain.Proplem" resultMap="BaseResultMap">
+        select * from proplem
+        <where>
+            <if test="type != null and type != ''">
+                type = #{type}
+            </if>
+            <if test="title != null and title != ''">
+                <bind name="pattern" value="'%' + title + '%'"/>
+                and (title like #{pattern}
+            </if>
+            <if test="title != null and title != ''">
+                <bind name="pattern" value="'%' + title + '%'"/>
+                OR answer like #{pattern}
+            </if>
+            <if test="title != null and title != ''">
+                <bind name="pattern" value="'%' + title + '%'"/>
+                OR anlysis like #{pattern})
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" parameterType="exam.domain.Proplem">
+        insert into proplem(id,`type`,difficulty,
+                            points,title,score,
+                            selectA,selectB,selectC,
+                            selectD,answer,anlysis,
+                            courseno,createtime)
+        values (#{id}, #{type}, #{difficulty},
+                #{points}, #{title}, #{score},
+                #{selecta}, #{selectb}, #{selectc},
+                #{selectd}, #{answer}, #{anlysis},
+                #{courseno},#{createtime})
+    </insert>
+
+    <update id="update"  parameterType="exam.domain.Proplem">
+        update proplem
+        <set>
+            <if test="difficulty != null and difficulty != ''">
+                difficulty = #{difficulty},
+            </if>
+            <if test="points != null and points != ''">
+                points = #{points},
+            </if>
+            <if test="title != null and title != ''">
+                title = #{title},
+            </if>
+            <if test="score != null and score != ''">
+                score = #{score},
+            </if>
+            <if test="selecta != null and selecta != ''">
+                selecta = #{selecta},
+            </if>
+            <if test="selectb != null and selectb != ''">
+                selectb = #{selectb},
+            </if>
+            <if test="selectc != null and selectc != ''">
+                selectc = #{selectc},
+            </if>
+            <if test="selectd != null and selectd != ''">
+                selectd = #{selectd},
+            </if>
+            <if test="answer != null and answer != ''">
+                answer = #{answer},
+            </if>
+            <if test="anlysis != null and anlysis != ''">
+                anlysis = #{anlysis}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+</mapper>

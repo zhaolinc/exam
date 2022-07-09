@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="exam.mapper.PaperMapper">
+
+    <resultMap id="BaseResultMap" type="exam.domain.Paper">
+        <id property="id" column="ID" jdbcType="VARCHAR"/>
+        <result property="courseno" column="courseno" jdbcType="VARCHAR"/>
+        <result property="single" column="single" jdbcType="INTEGER"/>
+        <result property="singlegrade" column="singlegrade" jdbcType="INTEGER"/>
+        <result property="multiple" column="multiple" jdbcType="INTEGER"/>
+        <result property="multiplegrade" column="multiplegrade" jdbcType="INTEGER"/>
+        <result property="judge" column="judge" jdbcType="INTEGER"/>
+        <result property="judgegrade" column="judgegrade" jdbcType="INTEGER"/>
+        <result property="completion" column="completion" jdbcType="INTEGER"/>
+        <result property="completiongrade" column="completiongrade" jdbcType="INTEGER"/>
+        <result property="simple" column="simple" jdbcType="INTEGER"/>
+        <result property="simplegrade" column="simplegrade" jdbcType="INTEGER"/>
+        <result property="difficulty" column="difficulty" jdbcType="DOUBLE"/>
+        <result property="points" column="points" jdbcType="VARCHAR"/>
+        <result property="problemstr" column="problemstr" jdbcType="VARCHAR"/>
+        <result property="totalscore" column="totalScore" jdbcType="INTEGER"/>
+        <result property="starttime" column="starttime" jdbcType="TIMESTAMP"/>
+        <result property="endtime" column="endtime" jdbcType="TIMESTAMP"/>
+        <result property="author" column="author" jdbcType="VARCHAR"/>
+        <result property="coverage" column="coverage" jdbcType="DOUBLE"/>
+        <result property="fitness" column="fitness" jdbcType="DOUBLE"/>
+        <result property="coursename" column="coursename" jdbcType="VARCHAR"/>
+        <result property="type" column="type" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        ID,courseno,single,
+        singlegrade,multiple,multiplegrade,
+        judge,judgegrade,completion,
+        completiongrade,simple,simplegrade,
+        difficulty,points,problemstr,
+        totalScore,starttime,endtime,
+        author,coverage,fitness，type
+    </sql>
+
+    <select id="select" resultMap="BaseResultMap">
+        select p.*,c.coursename from paper p,course c
+            where p.courseno = c.courseno
+    </select>
+
+
+    <select id="selectById" resultMap="BaseResultMap">
+        select * from paper where id = #{value}
+    </select>
+
+    <!--查询全部考试-->
+    <select id="selectTest" parameterType="String" resultMap="BaseResultMap">
+        select p.*,c.coursename from paper p,course c,uclink uc
+        where p.courseno = c.courseno
+          and uc.courseno = p.courseno
+          and p.type = 1
+          and uc.userno = #{value}
+    </select>
+
+    <insert id="insert">
+        insert into paper(ID,courseno,single,
+                          singlegrade,multiple,multiplegrade,
+                          judge,judgegrade,completion,
+                          completiongrade,`simple`,simplegrade,
+                          difficulty,points,problemstr,
+                          starttime,endtime,
+                          coverage,fitness)
+        values (#{id}, #{courseno}, #{single},
+                   #{singlegrade}, #{multiple}, #{multiplegrade},
+                   #{judge}, #{judgegrade}, #{completion},
+                   #{completiongrade},#{simple}, #{simplegrade},
+                   #{difficulty}, #{points}, #{problemstr},
+                   #{starttime}, #{endtime},#{coverage}, #{fitness})
+    </insert>
+
+    <update id="update" parameterType="exam.domain.Paper" >
+        update paper set starttime = #{starttime}, endtime = #{endtime} where id = #{id}
+    </update>
+
+    <update id="cancel" parameterType="String" >
+        update paper set starttime = null, endtime = null where id = #{id}
+    </update>
+
+    <update id="updatetest" parameterType="String" >
+        update paper set type = 1 where id = #{id}
+    </update>
+
+    <update id="updatenotest" parameterType="String" >
+        update paper set type = 0 where id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="String">
+        delete from paper where id = #{value}
+    </delete>
+</mapper>

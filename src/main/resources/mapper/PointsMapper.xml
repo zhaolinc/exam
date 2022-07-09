@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="exam.mapper.PointsMapper">
+
+    <resultMap id="BaseResultMap" type="exam.domain.Points">
+        <id property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="pointid" column="pointid" jdbcType="INTEGER"/>
+        <result property="point" column="point" jdbcType="VARCHAR"/>
+        <result property="courseno" column="courseno" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,pointid,point,courseno
+    </sql>
+
+    <select id="selectByCourseno" parameterType="String" resultMap="BaseResultMap">
+        select * from points where courseno = #{value}
+    </select>
+
+    <insert id="insert">
+        insert into points(id,pointid,point,courseno) values(#{id},#{pointid},#{point},#{courseno})
+    </insert>
+
+
+</mapper>

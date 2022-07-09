@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="exam.mapper.ClassesMapper">
+
+    <resultMap id="BaseResultMap" type="exam.domain.Classes">
+            <id property="classno" column="classno" jdbcType="VARCHAR"/>
+            <result property="classname" column="classname" jdbcType="VARCHAR"/>
+            <result property="count" column="count" jdbcType="INTEGER"/>
+            <result property="size" column="size" jdbcType="INTEGER"/>
+            <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
+            <result property="describe" column="describe" jdbcType="VARCHAR"/>
+            <result property="createtime" column="createtime" jdbcType="VARCHAR"/>
+            <result property="teacherno" column="teacherno" jdbcType="INTEGER"/>
+            <result property="master" column="name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="BaseColumn">
+        classno,classname,`count`,
+        `size`,avatar,`describe`,
+        createtime,master,teacherno
+    </sql>
+    <!--查询所有班级-->
+    <select id="select" parameterType="String" resultMap="BaseResultMap">
+        select c.*,u.name FROM classes c, user u
+        <where>
+            <if test="classno != null and classno != ''">
+                c.classno = #{classno}
+            </if>
+            <if test="classname != null and classname != ''">
+                c.classname = #{classname}
+            </if>
+            and c.teacherno = u.userno
+            and u.type = 1
+        </where>
+    </select>
+
+    <!--根据classno查询班级信息-->
+    <select id="selectByClassno" parameterType="String" resultMap="BaseResultMap">
+        select c.*,u.name FROM classes c, user u
+        where c.teacherno = u.userno
+        and c.classno = #{value}
+    </select>
+
+    <!--查询所有人数未满班级列表-->
+    <select id="selectNotFull" parameterType="String" resultMap="BaseResultMap">
+        select * from classes where size > count
+    </select>
+
+    <insert id="insert" parameterType="exam.domain.Classes" keyProperty="classno">
+        insert into classes(classno,classname,`count`,`size`,avatar,`describe`,teacherno)
+        values (#{classno},#{classname},'0',#{size},#{avatar},#{describe},#{teacherno})
+    </insert>
+
+    <!--删除班级-->
+    <delete id="delete" parameterType="exam.domain.Classes">
+        delete from classes  where classno = #{value}
+    </delete>
+
+    <!--  修改班级信息  -->
+    <update id="updateClassInfo"  parameterType="exam.domain.Classes">
+        update classes
+        <set>
+            <if test="avatar != null and avatar != ''">
+                avatar = #{avatar},
+            </if>
+            <if test="classname != null and classname != ''">
+                classname = #{classname},
+            </if>
+            <if test="size != null and size != ''">
+                `size` = #{size},
+            </if>
+            <if test="describe != null and describe != ''">
+                `describe` = #{describe}
+            </if>
+        </set>
+            where classno = #{classno}
+    </update>
+
+</mapper>
